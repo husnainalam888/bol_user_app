@@ -70,7 +70,7 @@ const TextCats = props => {
         }
         renderItem={renderItem}
         contentContainerStyle={{paddingStart: 20}}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => index}
         horizontal
         showsHorizontalScrollIndicator={false}
       />

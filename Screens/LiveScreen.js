@@ -1,19 +1,25 @@
 import React, {useRef, useState} from 'react';
 import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import Video from 'react-native-video';
-const LiveScreen = () => {
+import VideoPlayer from 'react-native-video-controls';
+
+const LiveScreen = ({navigation, route}) => {
+  const data = route.params?.data;
+  console.log(data);
   return (
     <View style={styles.container}>
-      <Video
+      <VideoPlayer source={{uri: data.stream_link}} />
+      {/* <Video
         style={styles.liveStreamView}
         paused={false}
         muted={true}
+        render
         source={{
-          uri: 'http://16.171.41.45:8080/hls/testing.m3u8',
+          uri: data.stream_link,
         }}
         onError={error => console.log(error)}
         onProgress={progress => console.log(progress)}
-      />
+      /> */}
     </View>
   );
 };

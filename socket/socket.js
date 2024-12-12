@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-const socket = io('http://192.168.100.13:3000');
+const socket = io('http://192.168.254.206:3000');
 export const initSocket = updateLocation => {
   socket.on('connect', () => {
     console.log('Connected to socket server');

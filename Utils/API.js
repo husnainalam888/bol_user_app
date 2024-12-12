@@ -1,10 +1,10 @@
 export const BASE_URL =
-  'http://multivendorv3.freelanceworking.online/apis/public/api/customer/';
+  'https://multivendor.freelancedemo.site/apis/public/api/customer/';
 // api.js
 
 export const IMAGE_B_URL =
   // 'https://multivendorv3.freelanceworkxyz.site/public/images/';
-  'http://multivendorv3.freelanceworking.online/apis/public/images/';
+  'https://multivendor.freelancedemo.site/apis/public/images/';
 // Function to make a POST request
 export const postRequest = async (endpoint, data, json = false) => {
   try {

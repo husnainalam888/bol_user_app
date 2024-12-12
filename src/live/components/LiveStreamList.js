@@ -4,6 +4,7 @@ import {
   Image,
   ImageBackground,
   Pressable,
+  RefreshControl,
   StyleSheet,
   Text,
   View,
@@ -14,18 +15,27 @@ import SVG_XML from '../svg/svg';
 import {useNavigation} from '@react-navigation/native';
 import {Uri} from '../../../Utils/NodeApi';
 
-const LiveStreamList = ({data}) => {
+const LiveStreamList = ({data, onRefresh}) => {
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
   const navigation = useNavigation();
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await onRefresh();
+    setIsRefreshing(false);
+  };
   return (
     <FlatList
       data={data}
-      keyExtractor={item => item.title}
+      keyExtractor={item => item._id}
       style={styles.FlatList}
+      refreshControl={
+        <RefreshControl onRefresh={handleRefresh} refreshing={isRefreshing} />
+      }
       contentContainerStyle={styles.contentContainerStyle}
       showsVerticalScrollIndicator={false}
       renderItem={({item}) => (
         <Pressable
-          onPress={() => navigation.navigate('LiveScreen')}
+          onPress={() => navigation.navigate('LiveScreen', {data: item})}
           style={styles.item}>
           <View>
             <ImageBackground style={styles.thumb} source={Uri(item.thumbnail)}>
@@ -35,7 +45,7 @@ const LiveStreamList = ({data}) => {
                 <View />
               )}
               <Text style={styles.viewerText}>
-                {item.viewers.length} viewers
+                {item?.viewers?.length} viewers
               </Text>
             </ImageBackground>
           </View>
@@ -84,7 +94,7 @@ const styles = StyleSheet.create({
     height: 40,
     width: 40,
     borderRadius: 20,
-    backgroundColor: 'red',
+    backgroundColor: 'lightgray',
   },
   item: {
     gap: 10,

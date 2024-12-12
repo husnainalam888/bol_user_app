@@ -4,7 +4,7 @@ import {SvgFromXml} from 'react-native-svg';
 import SVG_XML from '../svg/svg';
 import LiveStreamList from '../components/LiveStreamList';
 import {NodeGetRequest} from '../../../Utils/NodeApi';
-
+const TAG = 'LiveTab.js';
 const LiveTab = () => {
   const [streamsList, setStreamsList] = useState([]);
   useEffect(() => {
@@ -13,6 +13,7 @@ const LiveTab = () => {
   const getStreamsList = async () => {
     try {
       const response = await NodeGetRequest('streaming/list');
+      console.log(TAG, 'getStreamsList : response :', response);
       if (response.status) {
         setStreamsList(response.data);
       } else {
@@ -26,7 +27,7 @@ const LiveTab = () => {
   return (
     <View style={styles.container}>
       <Header title="Live" />
-      <LiveStreamList data={streamsList} />
+      <LiveStreamList onRefresh={getStreamsList} data={streamsList} />
     </View>
   );
 };
