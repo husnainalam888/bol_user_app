@@ -11,7 +11,7 @@ const SpecialOffers = () => {
       <Header title="Special Offers" />
       <View style={styles.subContainer}>
         <FlatList
-          keyExtractor={index => index}
+          keyExtractor={(item, index) => index}
           style={{marginTop: 10}}
           showsVerticalScrollIndicator={false}
           data={[...offers]}

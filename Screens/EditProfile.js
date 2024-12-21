@@ -21,6 +21,7 @@ import {useCustomAlert} from '../Components/Common/AlertProvider';
 import ContainerView from '../Components/Common/ContainerView';
 import {IMAGE_B_URL, postRequest} from '../Utils/API';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {NodePostRequest} from '../Utils/NodeApi';
 
 const EditProfile = ({navigation, route}) => {
   const context = route.params.context;
@@ -166,6 +167,19 @@ const EditProfile = ({navigation, route}) => {
           require('../assets/icons/tick_f.png'),
         );
         setUser(response.data);
+        NodePostRequest(
+          'auth/vendor/login',
+          {...response.data, role: 'user'},
+          true,
+        ).then(res => {
+          if (res.status) {
+            console.log('res.data._id', res.data._id);
+            setUser({
+              ...response.data,
+              mongo_id: res.data._id,
+            });
+          }
+        });
         navigation.navigate('BottomTabs');
       }
       if (response.message == 'already') {

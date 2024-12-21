@@ -24,6 +24,8 @@ import {mmkvStorage} from '../Utils/Modules';
 import ChangePassword from '../Screens/ChangePassword';
 import TrackOrderInRealTime from '../Screens/TrackOrderInRealTime';
 import LiveScreen from '../Screens/LiveScreen';
+import ChannelDetails from '../src/live/screens/ChannelDetails';
+import SearchLive from '../src/live/screens/SearchLive';
 const Stack = createNativeStackNavigator();
 
 const StackNavigator = () => {
@@ -48,6 +50,8 @@ const StackNavigator = () => {
       <Stack.Screen name="AddNewAddress" component={AddNewAddress} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="LiveScreen" component={LiveScreen} />
+      <Stack.Screen name="ChannelDetails" component={ChannelDetails} />
+      <Stack.Screen name="SearchLive" component={SearchLive} />
     </Stack.Navigator>
   );
 };

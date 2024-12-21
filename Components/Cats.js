@@ -74,7 +74,7 @@ const Cats = ({data, onSelect}) => {
           flexGrow: 1,
         }}
         renderItem={renderItem}
-        keyExtractor={index => index}
+        keyExtractor={(item, index) => index}
         horizontal={true}
       />
     </View>

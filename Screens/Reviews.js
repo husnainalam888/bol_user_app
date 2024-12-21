@@ -10,7 +10,7 @@ const Reviews = () => {
       <Header title="4.8 (4,742 reviews)" />
       <RatingSelector />
       <FlatList
-        keyExtractor={index => index}
+        keyExtractor={(item, index) => index}
         contentContainerStyle={{marginTop: 20}}
         data={[1, 2, 3, 4, 5, 6, 7, 8]}
         renderItem={() => <ReviewComp />}

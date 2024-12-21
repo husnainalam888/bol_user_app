@@ -15,6 +15,7 @@ import ContainerView from '../Components/Common/ContainerView';
 import {useCustomAlert} from '../Components/Common/AlertProvider';
 import {useMMKVStorage} from 'react-native-mmkv-storage';
 import {mmkvStorage} from '../Utils/Modules';
+import {NodePostRequest} from '../Utils/NodeApi';
 
 const LoginSignUp = ({navigation}) => {
   const [userData, setUserData] = useMMKVStorage('userData', mmkvStorage, null);
@@ -50,6 +51,19 @@ const LoginSignUp = ({navigation}) => {
         setPassword('');
         setUserData(response.data);
         navigation.replace('BottomTabs');
+        NodePostRequest(
+          'auth/vendor/login',
+          {...response.data, role: 'user'},
+          true,
+        ).then(res => {
+          if (res.status) {
+            console.log('node request respose :', res);
+            setUserData({
+              ...response.data,
+              mongo_id: res.data._id,
+            });
+          }
+        });
       }
       console.log(response);
     } catch (error) {

@@ -13,6 +13,7 @@ import React, {useState} from 'react';
 import {Colors} from '../../Utils/Colors';
 import DropDownModal from '../ProfileComps/DropDownModal';
 import {TabBarItem} from 'react-native-tab-view';
+import {SvgFromXml} from 'react-native-svg';
 
 const InputComp = props => {
   const [showOptions, setShowOptions] = useState(false);
@@ -78,7 +79,7 @@ const InputComp = props => {
           visible={showOptions}
           onClose={() => setShowOptions(false)}>
           <FlatList
-            keyExtractor={index => index}
+            keyExtractor={(item, index) => index}
             style={{
               marginTop: 20,
               maxHeight: Dimensions.get('window').height * 0.8,
@@ -109,6 +110,9 @@ const InputComp = props => {
           />
         </DropDownModal>
       )}
+      {props.endSvg && (
+        <SvgFromXml style={{marginHorizontal: 16}} xml={props.endSvg} />
+      )}
     </TouchableOpacity>
   );
 };
@@ -129,7 +133,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
     marginHorizontal: 10,
-    paddingVertical: 16,
+    paddingVertical: 12,
   },
   endIcon: {
     height: 20,

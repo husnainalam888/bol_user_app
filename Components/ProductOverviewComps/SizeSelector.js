@@ -32,7 +32,7 @@ const SizesSelector = () => {
       <FlatList
         data={sizes}
         renderItem={renderItem}
-        keyExtractor={index => index}
+        keyExtractor={(item, index) => index}
         horizontal
         showsHorizontalScrollIndicator={false}
       />

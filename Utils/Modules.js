@@ -344,3 +344,28 @@ export function formatNumber(value) {
     return (value / 1000000).toFixed(1) + 'M';
   }
 }
+
+export function formatTimeAgo(date) {
+  const now = new Date();
+  const past = new Date(date);
+  const diffInSeconds = Math.floor((now - past) / 1000);
+
+  const timeIntervals = [
+    {label: 'year', seconds: 365 * 24 * 60 * 60},
+    {label: 'month', seconds: 30 * 24 * 60 * 60},
+    {label: 'week', seconds: 7 * 24 * 60 * 60},
+    {label: 'day', seconds: 24 * 60 * 60},
+    {label: 'hour', seconds: 60 * 60},
+    {label: 'minute', seconds: 60},
+    {label: 'second', seconds: 1},
+  ];
+
+  for (const interval of timeIntervals) {
+    const count = Math.floor(diffInSeconds / interval.seconds);
+    if (count > 0) {
+      return `${count} ${interval.label}${count > 1 ? 's' : ''} ago`;
+    }
+  }
+
+  return 'just now'; // When the difference is less than a second
+}

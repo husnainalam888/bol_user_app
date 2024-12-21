@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import CustomTabBar from './CustomTabBar'; // Import your custom tab bar component
@@ -9,10 +9,16 @@ import Profile from '../../Tabs/Profile';
 import Wallet from '../../Tabs/Wallet';
 import LiveScreen from '../../Screens/LiveScreen';
 import LiveTab from '../../src/live/screens/LiveTab';
+import SocketService from '../../socket/SocketService';
 
 const Tab = createBottomTabNavigator();
 
 const BottomTabs = () => {
+  useEffect(() => {
+    SocketService.connect().on('connect', () => {
+      console.log('connected to socket');
+    });
+  }, []);
   return (
     <Tab.Navigator
       initialRouteName="Live"

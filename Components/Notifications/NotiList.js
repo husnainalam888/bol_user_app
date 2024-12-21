@@ -35,7 +35,7 @@ const NotiList = props => {
       <FlatList
         data={DATA}
         renderItem={renderNotification}
-        keyExtractor={index => index}
+        keyExtractor={(item, index) => index}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
       />

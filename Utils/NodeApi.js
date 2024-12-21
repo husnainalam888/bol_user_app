@@ -1,5 +1,5 @@
-// export const BASE_URL = 'http://192.168.254.206:3000/';
-export const BASE_URL = 'http://13.48.147.251:3000/';
+export const BASE_URL = 'http://192.168.195.206:3000/';
+// export const BASE_URL = 'http://13.48.147.251:3000/';
 
 export const NodePostRequest = async (endpoint, data, json = false) => {
   try {
@@ -11,7 +11,7 @@ export const NodePostRequest = async (endpoint, data, json = false) => {
       },
       body: json ? JSON.stringify(data) : data,
     });
-
+    console.log('req.body', json ? JSON.stringify(data) : data);
     const jsonResponse = await response.json();
     return jsonResponse;
   } catch (error) {

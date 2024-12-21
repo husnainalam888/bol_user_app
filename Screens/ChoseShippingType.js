@@ -46,8 +46,7 @@ const ChooseShippingType = () => {
       <Header title={'Shipping Address'} showSearch={false} />
       <ScrollView style={styles.subContainer}>
         <FlatList
-          keyExtractor={index => index}
-          keyExtractor={index => index}
+          keyExtractor={(item, index) => index}
           data={shippingTypes}
           renderItem={({item}) => (
             <AddressComp
