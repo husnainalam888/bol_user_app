@@ -4,6 +4,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import {useNavigation} from '@react-navigation/native';
 import Search from '../DashboardComps/Search';
+import {SvgFromXml} from 'react-native-svg';
+import SVG_XML from '../../src/live/svg/svg';
 
 const Header = ({
   value,
@@ -46,7 +48,8 @@ const Header = ({
           <TouchableOpacity
             onPress={!hideBack && handleGoBack}
             style={{height: 24, width: 24}}>
-            <Ionicons name="arrow-back" color="black" size={24} />
+            {/* <Ionicons name="arrow-back" color="black" size={24} /> */}
+            <SvgFromXml xml={SVG_XML.backButtonBlack} height={20} width={20} />
           </TouchableOpacity>
         )}
         {showTitle && (

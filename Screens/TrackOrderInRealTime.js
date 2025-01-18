@@ -161,7 +161,7 @@ const TrackOrderInRealTime = ({navigation, route}) => {
           style={styles.map}
           zoomEnabled={true}
           onPress={handleMapPress}
-          initialCamera={{pitch: 60, heading: 60, altitude: 1000, zoom: 100}}
+          // initialCamera={{pitch: 60, heading: 60, altitude: 1000, zoom: 100}}
           customMapStyle={customMapStyle}
           initialRegion={initialRegion}>
           {liveLocation != '' && (

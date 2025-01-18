@@ -8,6 +8,8 @@ import {
   TextInput,
   Alert,
   Keyboard,
+  Modal,
+  Pressable,
 } from 'react-native';
 import Video from 'react-native-video';
 import Text from '../Components/Text';
@@ -22,11 +24,11 @@ import {useMMKVStorage} from 'react-native-mmkv-storage';
 import {NodeGetRequest} from '../Utils/NodeApi';
 import {toggleFollow} from '../src/api/nodeApiController';
 import {Loading} from '../src/live/screens/ChannelDetails';
-
+import RBSheet from 'react-native-raw-bottom-sheet';
 const LiveScreen = ({navigation, route}) => {
   const data = route.params?.data;
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isFullScreen, setFullScreen] = useState(false);
+  const [isFullScreen, setFullScreen] = useState(true);
   const [user, setUser] = useMMKVStorage('userData', mmkvStorage, null);
   const [viwers, setViwers] = useState(data.viewers);
   const [commentText, setCommentText] = useState('');
@@ -35,8 +37,18 @@ const LiveScreen = ({navigation, route}) => {
   const [streamUser, setStreamUser] = useState(data.user);
   const [isLoading, setIsLoading] = useState(false);
   const [chatToggle, setChatToggle] = useState(false);
+  const [allProducts, setAllProducts] = useMMKVStorage(
+    'allProducts',
+    mmkvStorage,
+    [],
+  );
+  const productIds = data?.products || [];
+  const infoSheet = useRef();
+  const [selectedProducts] = useState(
+    allProducts?.filter(i => productIds?.find(e => i.id == e)),
+  );
   useEffect(() => {
-    // console.log('LiveScreen data : ', JSON.stringify(data, null, 2));
+    console.log('LiveScreen data : ', JSON.stringify(data, null, 2));
     commentsRef.current?.scrollToOffset({
       animated: true,
       offset: 0,
@@ -87,6 +99,7 @@ const LiveScreen = ({navigation, route}) => {
     };
   }, []);
   useEffect(() => {
+    infoSheet?.current?.open();
     Keyboard.addListener('keyboardDidShow', () => {
       setChatToggle(true);
     });
@@ -94,6 +107,7 @@ const LiveScreen = ({navigation, route}) => {
       Keyboard.removeAllListeners('keyboardDidShow');
     };
   }, []);
+
   const getComments = async () => {
     try {
       const response = await NodeGetRequest(`streaming/comments/${data._id}`);
@@ -120,6 +134,7 @@ const LiveScreen = ({navigation, route}) => {
       setCommentText('');
     }
   };
+
   return (
     <View style={styles.container}>
       {/* <VideoPlayer source={{uri: data.stream_link}} /> */}
@@ -155,6 +170,32 @@ const LiveScreen = ({navigation, route}) => {
           onEnd={() => setIsPlaying(false)}
         />
         <View style={styles.overlay}>
+          <View
+            style={{
+              position: 'absolute',
+              top: 60,
+              left: 20,
+              width: 80,
+              gap: 10,
+            }}>
+            {selectedProducts?.map(p => (
+              <Pressable
+                onPress={() => {
+                  {
+                    navigation.navigate('ProductOverview', {item: p});
+                  }
+                }}
+                style={styles.productContainer}>
+                <Image
+                  source={{uri: IMAGE_B_URL + p.product_image?.[0].image}}
+                  style={styles.productImage}
+                />
+                {/* <Text numberOfLines={2} style={styles.productName}>
+                  {p?.name}
+                </Text> */}
+              </Pressable>
+            ))}
+          </View>
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}>
@@ -167,6 +208,25 @@ const LiveScreen = ({navigation, route}) => {
               width={40}
               xml={!isPlaying ? SVG_XML.play : SVG_XML.pause}
             />
+            <View
+              style={{
+                justifyContent: 'flex-end',
+                position: 'absolute',
+                bottom: 60,
+                opacity: 0.4,
+                transform: [
+                  {
+                    rotate: '90deg',
+                  },
+                ],
+              }}>
+              <SvgFromXml
+                height={40}
+                onPress={() => infoSheet.current?.open()}
+                width={40}
+                xml={SVG_XML.backButton}
+              />
+            </View>
           </View>
           <View style={styles.bottomControls}>
             <View style={styles.rowJustify}>
@@ -183,92 +243,105 @@ const LiveScreen = ({navigation, route}) => {
                 </Text>
               </View>
             </View>
-            <SvgFromXml
+            {/* <SvgFromXml
               onPress={() => setFullScreen(!isFullScreen)}
               height={16}
               width={16}
               xml={isFullScreen ? SVG_XML.fullScreenOff : SVG_XML.fullScreen}
-            />
+            /> */}
           </View>
         </View>
       </View>
-      <View style={styles.subContainer}>
-        {!chatToggle && (
-          <>
+      <RBSheet
+        draggable={true}
+        closeOnPressBack={true}
+        ref={infoSheet}
+        height={Dimensions.get('window').height * 0.7}>
+        <View style={styles.modalContainer}>
+          <View style={styles.subContainer}>
+            {!chatToggle && (
+              <>
+                <View
+                  style={{
+                    gap: 5,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#f3f3f3',
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                  }}>
+                  <Text style={styles.title}>{data.title}</Text>
+                  <Text style={styles.description}>{data.description}</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('ChannelDetails', {
+                      data: streamUser,
+                      setUser: setStreamUser,
+                    });
+                  }}
+                  activeOpacity={1}
+                  style={styles.channel}>
+                  <Image
+                    style={styles.image}
+                    source={{uri: IMAGE_B_URL + data?.user?.image}}
+                  />
+                  <View style={{flex: 1}}>
+                    <Text style={styles.title}>{data?.user?.name}</Text>
+                    <Text style={styles.description}>{data?.user?.email}</Text>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => {
+                      toggleFollow(streamUser._id, setIsLoading, setStreamUser);
+                    }}
+                    style={styles.followBtn}>
+                    <Text style={styles.followBtnText}>
+                      {streamUser?.followers?.includes(user.mongo_id)
+                        ? 'Unfollow'
+                        : 'Follow'}
+                    </Text>
+                  </TouchableOpacity>
+                </TouchableOpacity>
+              </>
+            )}
             <View
-              style={{
-                gap: 5,
-                borderBottomWidth: 1,
-                borderBottomColor: '#f3f3f3',
-                paddingHorizontal: 20,
-                paddingVertical: 10,
-              }}>
-              <Text style={styles.title}>{data.title}</Text>
-              <Text style={styles.description}>{data.description}</Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('ChannelDetails', {
-                  data: streamUser,
-                  setUser: setStreamUser,
-                });
-              }}
-              activeOpacity={1}
-              style={styles.channel}>
-              <Image
-                style={styles.image}
-                source={{uri: IMAGE_B_URL + data?.user?.image}}
-              />
-              <View style={{flex: 1}}>
-                <Text style={styles.title}>{data?.user?.name}</Text>
-                <Text style={styles.description}>{data?.user?.email}</Text>
-              </View>
+              style={[
+                styles.commentHeader,
+                chatToggle && {marginTop: 10, marginBottom: -10},
+              ]}>
+              <Text style={styles.commentHeaderTitle}>Live Chat</Text>
               <TouchableOpacity
-                onPress={() => {
-                  toggleFollow(streamUser._id, setIsLoading, setStreamUser);
-                }}
-                style={styles.followBtn}>
-                <Text style={styles.followBtnText}>
-                  {streamUser?.followers?.includes(user.mongo_id)
-                    ? 'Unfollow'
-                    : 'Follow'}
-                </Text>
+                onPress={() => setChatToggle(!chatToggle)}
+                style={[
+                  styles.chatToggle,
+                  chatToggle && {transform: [{rotate: '270deg'}]},
+                ]}>
+                <SvgFromXml
+                  xml={SVG_XML.backButtonBlack}
+                  height={16}
+                  width={16}
+                />
               </TouchableOpacity>
-            </TouchableOpacity>
-          </>
-        )}
-        <View
-          style={[
-            styles.commentHeader,
-            chatToggle && {marginTop: 10, marginBottom: -10},
-          ]}>
-          <Text style={styles.commentHeaderTitle}>Live Chat</Text>
-          <TouchableOpacity
-            onPress={() => setChatToggle(!chatToggle)}
-            style={[
-              styles.chatToggle,
-              chatToggle && {transform: [{rotate: '270deg'}]},
-            ]}>
-            <SvgFromXml xml={SVG_XML.backButtonBlack} height={16} width={16} />
-          </TouchableOpacity>
+            </View>
+            <CommentList data={comments} ref={commentsRef} />
+            <View style={styles.line} />
+            <View style={styles.commentInputContainer}>
+              <TextInput
+                placeholderTextColor={'#999999'}
+                style={styles.commentInput}
+                value={commentText}
+                onChangeText={text => setCommentText(text)}
+                placeholder="Add a comment"
+              />
+              <TouchableOpacity
+                onPress={() => handleSendComment()}
+                style={styles.commentButton}>
+                <SvgFromXml height={16} width={16} xml={SVG_XML.send} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <CommentList data={comments} ref={commentsRef} />
-        <View style={styles.line} />
-        <View style={styles.commentInputContainer}>
-          <TextInput
-            placeholderTextColor={'#999999'}
-            style={styles.commentInput}
-            value={commentText}
-            onChangeText={text => setCommentText(text)}
-            placeholder="Add a comment"
-          />
-          <TouchableOpacity
-            onPress={() => handleSendComment()}
-            style={styles.commentButton}>
-            <SvgFromXml height={16} width={16} xml={SVG_XML.send} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </RBSheet>
+
       <Loading visible={isLoading} />
     </View>
   );
@@ -331,6 +404,9 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 10,
     backgroundColor: 'white',
+    borderTopEndRadius: 20,
+    borderTopStartRadius: 20,
+    overflow: 'hidden',
   },
   title: {
     fontSize: 14,
@@ -455,6 +531,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: 30,
+    flex: 1,
   },
   smWhite: {
     fontSize: 12,
@@ -489,6 +566,23 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     padding: 16,
     margin: -16,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  productName: {
+    color: 'black',
+  },
+  productContainer: {
+    backgroundColor: '#ffffff',
+    padding: 5,
+    borderRadius: 5,
+    gap: 10,
+  },
+  productImage: {
+    height: 80,
+    resizeMode: 'center',
   },
 });
 

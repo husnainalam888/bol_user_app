@@ -228,7 +228,7 @@ const AddNewAddress = ({navigation}) => {
           zoomEnabled={true}
           onUserLocationChange={handleUserLocationChange}
           onPress={handleMapPress}
-          initialCamera={{pitch: 60, heading: 60, altitude: 1000, zoom: 15}}
+          // initialCamera={{pitch: 60, heading: 60, altitude: 1000, zoom: 15}}
           // customMapStyle={customMapStyle}
           initialRegion={initialRegion}>
           {location && (

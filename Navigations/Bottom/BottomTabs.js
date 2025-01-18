@@ -21,7 +21,7 @@ const BottomTabs = () => {
   }, []);
   return (
     <Tab.Navigator
-      initialRouteName="Live"
+      initialRouteName="Home"
       tabBar={props => <CustomTabBar {...props} />} // Use your custom tab bar component
       screenOptions={{
         headerShown: false, // Hide the header for all screens

@@ -32,8 +32,8 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       {/* <Stack.Screen name="IntroScreen" component={IntroScreen} /> */}
-      <Stack.Screen name="BottomTabs" component={BottomTabs} />
       <Stack.Screen name="LoginSignUp" component={SigninSignUp} />
+      <Stack.Screen name="BottomTabs" component={BottomTabs} />
       <Stack.Screen name="Dashboard" component={Dashboard} />
       <Stack.Screen name="ProductOverview" component={ProductOverview} />
       <Stack.Screen name="Reviews" component={Reviews} />

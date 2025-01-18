@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://192.168.195.206:3000/';
+export const BASE_URL = 'http://13.60.169.86:3000/';
 // export const BASE_URL = 'http://13.48.147.251:3000/';
 
 export const NodePostRequest = async (endpoint, data, json = false) => {
