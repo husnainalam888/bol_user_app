@@ -119,7 +119,10 @@ const EditProfile = ({navigation, route}) => {
           'Success',
           require('../assets/icons/tick_f.png'),
         );
-        log.info('Register Customer Api response : ', response);
+        log.info(
+          'Register Customer Api response : ',
+          JSON.stringify(response, null, 2),
+        );
         navigation.goBack();
       }
       if (response.message == 'already') {

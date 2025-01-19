@@ -1,4 +1,11 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Platform,
+} from 'react-native';
 import React from 'react';
 
 const ProfileMenuItem = props => {
@@ -11,7 +18,7 @@ const ProfileMenuItem = props => {
         paddingVertical: 16,
       }}>
       <Image
-        resizeMode="center"
+        resizeMode={Platform.OS == 'android' ? 'center' : 'contain'}
         style={styles.startIcon}
         source={props.startIcon}
       />

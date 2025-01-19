@@ -144,8 +144,8 @@ export const Shimmer = ({children, visible, style = {}}) => {
           : {}
       }
       visible={!visible}
-      shimmerColors={['#f3f3f3', '#f9f9f9']}
-      location={[0, 100]}
+      shimmerColors={['#f3f3f3', '#f9f9f9', '#f3f3f3']}
+      location={[0, 0, 0]}
       LinearGradient={LinearGradient}>
       {children}
     </ShimmerPlaceholder>

@@ -1,7 +1,7 @@
 // socket.js
 import io from 'socket.io-client';
 import {mmkvStorage} from '../Utils/Modules';
-const NODE_URL = 'http://192.168.195.206:3000';
+const NODE_URL = 'http://13.60.169.86:3000';
 
 class SocketService {
   constructor() {

@@ -57,7 +57,7 @@ const Dashboard = ({navigation}) => {
       if (setForceLoaing) {
         setForceLoaing(false);
       }
-      console.log('Dashoboard :', JSON.stringify(response));
+      console.log('Dashoboard :', JSON.stringify(response, null, 2));
       const res = response.data;
       setDashboardApiResponse(res);
       setCats(res.categories);
@@ -65,8 +65,8 @@ const Dashboard = ({navigation}) => {
       res.products.forEach(element => {
         if (element.product) element.product.forEach(i => products.push(i));
       });
-      console.log('Produts :', products);
-      setProducts(products);
+      console.log('Produts :', JSON.stringify(products, null, 2));
+      setProducts(products?.reverse());
       setAllProducts(products);
       setIsError(false);
     } catch (e) {
@@ -82,15 +82,15 @@ const Dashboard = ({navigation}) => {
   const handleFilterByTag = tag => {
     try {
       if (tag.id == -1) {
-        setProducts(allProducts);
+        setProducts(allProducts?.reverse());
       }
       const filtered = dashboardApiResponse.products.find(item => {
         if (item.id == tag.id) {
           return item;
         }
       }).product;
-      log.info('filtered :', filtered);
-      setProducts(filtered);
+      log.info('filtered :', JSON.stringify(filtered, null, 2));
+      setProducts(filtered?.reverse());
     } catch (e) {
       console.log('Error : ', e);
     }
@@ -117,7 +117,7 @@ const Dashboard = ({navigation}) => {
             progressBackgroundColor="#fff"
           />
         }>
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
           <DashboardHeader />
           <Search
             clickable={true}
@@ -163,7 +163,7 @@ const Dashboard = ({navigation}) => {
             message={'No Products'}
             buttonText={'Show All'}
             onPressBtn={() => {
-              setProducts(allProducts);
+              setProducts(allProducts?.reverse());
               setSelectedTag({id: -1, name: 'All'});
             }}>
             <FlatList
@@ -174,7 +174,7 @@ const Dashboard = ({navigation}) => {
               keyExtractor={(item, index) => index.toString()} // Use toString() to convert index to string
             />
           </MyContainer>
-        </SafeAreaView>
+        </View>
       </ScrollView>
     </MyContainer>
   );

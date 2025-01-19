@@ -88,8 +88,9 @@ export function capitalizeString(str) {
 
 export const getDirections = async (startLoc, destinationLoc) => {
   try {
-    console.log('GetDirections', startLoc, destinationLoc);
-    const KEY = 'AIzaSyDJUAXenD6R8xst8Jand_-_Z8lLsmT_3SA'; //put your API key here.
+    console.log('GetDirections', startLoc, 'dest', destinationLoc);
+    // const KEY = 'AIzaSyDJUAXenD6R8xst8Jand_-_Z8lLsmT_3SA'; //put your API key here.
+    const KEY = `AIzaSyC8kcNsr7QKsKkEOhn-FrCVYFFizQ3YIj4`; // FROM HDIDA
     //otherwise, you'll have an 'unauthorized' error.
     let resp = await fetch(
       `https://maps.googleapis.com/maps/api/directions/json?origin=${startLoc}&destination=${destinationLoc}&key=${KEY}`,
@@ -175,7 +176,8 @@ export const showLocationEnabler = () => {
 // };
 export const getFormattedAddressFromCoordinates = async (
   coordinate,
-  apiKey = 'AIzaSyDJUAXenD6R8xst8Jand_-_Z8lLsmT_3SA',
+  // apiKey = 'AIzaSyDJUAXenD6R8xst8Jand_-_Z8lLsmT_3SA',
+  apiKey = `AIzaSyC8kcNsr7QKsKkEOhn-FrCVYFFizQ3YIj4`, // from hdida
 ) => {
   try {
     const {latitude, longitude} = coordinate;
@@ -240,7 +242,8 @@ export const getFormattedAddressFromCoordinates = async (
 
 export const geocodeAddress = async (
   address,
-  apiKey = 'AIzaSyAcFsaT_Cnrvb7Vy9CulEQB1walrDYFiTE',
+  // apiKey = 'AIzaSyAcFsaT_Cnrvb7Vy9CulEQB1walrDYFiTE',
+  apiKey = `AIzaSyC8kcNsr7QKsKkEOhn-FrCVYFFizQ3YIj4`, // from hdida
 ) => {
   try {
     const encodedAddress = encodeURIComponent(address);

@@ -10,6 +10,7 @@ import {
   Keyboard,
   Modal,
   Pressable,
+  ScrollView,
 } from 'react-native';
 import Video from 'react-native-video';
 import Text from '../Components/Text';
@@ -44,10 +45,17 @@ const LiveScreen = ({navigation, route}) => {
   );
   const productIds = data?.products || [];
   const infoSheet = useRef();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [selectedProducts] = useState(
     allProducts?.filter(i => productIds?.find(e => i.id == e)),
   );
   useEffect(() => {
+    // Keyboard.addListener('keyboardDidShow', () => {
+    //   setKeyboardVisible(true);
+    // });
+    // Keyboard.addListener('keyboardDidHide', () => {
+    //   setKeyboardVisible(false);
+    // });
     console.log('LiveScreen data : ', JSON.stringify(data, null, 2));
     commentsRef.current?.scrollToOffset({
       animated: true,
@@ -107,6 +115,8 @@ const LiveScreen = ({navigation, route}) => {
       Keyboard.removeAllListeners('keyboardDidShow');
     };
   }, []);
+
+  const commentInputStyle = keyboardVisible ? {} : {};
 
   const getComments = async () => {
     try {
@@ -256,8 +266,8 @@ const LiveScreen = ({navigation, route}) => {
         draggable={true}
         closeOnPressBack={true}
         ref={infoSheet}
-        height={Dimensions.get('window').height * 0.7}>
-        <View style={styles.modalContainer}>
+        height={Dimensions.get('window').height * 0.6}>
+        <ScrollView contentContainerStyle={styles.modalContainer}>
           <View style={styles.subContainer}>
             {!chatToggle && (
               <>
@@ -323,23 +333,25 @@ const LiveScreen = ({navigation, route}) => {
               </TouchableOpacity>
             </View>
             <CommentList data={comments} ref={commentsRef} />
-            <View style={styles.line} />
-            <View style={styles.commentInputContainer}>
-              <TextInput
-                placeholderTextColor={'#999999'}
-                style={styles.commentInput}
-                value={commentText}
-                onChangeText={text => setCommentText(text)}
-                placeholder="Add a comment"
-              />
-              <TouchableOpacity
-                onPress={() => handleSendComment()}
-                style={styles.commentButton}>
-                <SvgFromXml height={16} width={16} xml={SVG_XML.send} />
-              </TouchableOpacity>
+            <View style={commentInputStyle}>
+              <View style={styles.line} />
+              <View style={styles.commentInputContainer}>
+                <TextInput
+                  placeholderTextColor={'#999999'}
+                  style={styles.commentInput}
+                  value={commentText}
+                  onChangeText={text => setCommentText(text)}
+                  placeholder="Add a comment"
+                />
+                <TouchableOpacity
+                  onPress={() => handleSendComment()}
+                  style={styles.commentButton}>
+                  <SvgFromXml height={16} width={16} xml={SVG_XML.send} />
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
+        </ScrollView>
       </RBSheet>
 
       <Loading visible={isLoading} />
@@ -347,7 +359,7 @@ const LiveScreen = ({navigation, route}) => {
   );
 };
 
-export const CommentList = forwardRef(({data = []}, ref) => {
+export const CommentList = forwardRef(({data = [], footer}, ref) => {
   return (
     <FlatList
       data={data}
@@ -373,6 +385,10 @@ export const CommentList = forwardRef(({data = []}, ref) => {
           </View>
         </View>
       )}
+      ListHeaderComponent={() => {
+        if (footer) return footer();
+        else null;
+      }}
     />
   );
 });

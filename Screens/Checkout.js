@@ -77,7 +77,7 @@ const Checkout = ({navigation, route}) => {
       formData.append('customer_address', selectedAddress.id);
       formData.append('total', totalAmount);
       formData.append('product_id', JSON.stringify(product_ids));
-      log.info('formData', formData);
+      // log.info('formData', formData);
       setIsLoading(true);
       const response = await postRequest(
         `checkout/${user.id}`,
@@ -86,7 +86,7 @@ const Checkout = ({navigation, route}) => {
       );
       setIsLoading(false);
 
-      log.info('Checkout Response :', response);
+      log.info('Checkout Response :', JSON.stringify(response, null, 2));
       if (response.message == 'success') {
         showAlert(
           'Order Placed Successfully',

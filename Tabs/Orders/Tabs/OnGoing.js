@@ -37,7 +37,7 @@ const OnGoing = ({navigation}) => {
       setIsLoading(true);
       const response = await getRequest(`get_customer_orders/${user.id}`);
       setIsLoading(false);
-      log.info('Orders :', JSON.stringify(response));
+      log.info('Orders :', JSON.stringify(response, null, 2));
       const res = response.data;
       setOrders(res);
     } catch (e) {
@@ -60,7 +60,7 @@ const OnGoing = ({navigation}) => {
           }
           showsVerticalScrollIndicator={false}
           style={{marginTop: 16}}
-          data={ongoingOrders}
+          data={ongoingOrders.reverse()}
           keyExtractor={item => item.id}
           renderItem={({item}) => (
             <>

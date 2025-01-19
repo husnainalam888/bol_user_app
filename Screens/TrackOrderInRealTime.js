@@ -11,7 +11,7 @@ import {
   Linking,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import MapView, {Marker} from 'react-native-maps';
+import MapView, {MapPolyline, Marker} from 'react-native-maps';
 import Header from '../Components/Common/Header';
 import useGeolocation from '../Utils/Geolocation';
 import {
@@ -33,6 +33,7 @@ import RoundedButton from '../Components/Common/RoundedButton';
 import OrderSteps from '../Components/TrackOrderComps/OrderSteps';
 import ButtonWithTwoIcons from '../Components/Common/ButtonWithTwoIcons';
 import Button from '../Components/Button';
+import {NodeGetRequest} from '../Utils/NodeApi';
 
 const TrackOrderInRealTime = ({navigation, route}) => {
   const {item, customer} = route.params;
@@ -50,6 +51,7 @@ const TrackOrderInRealTime = ({navigation, route}) => {
   const [searchText, setSearchText] = useState('');
   const [searching, setSearching] = useState(false);
   const [liveLocation, setLiveLocation] = useState('');
+  const [routeCoordinates, setRouteCoords] = useState(false);
   const initialRegion = {
     latitude: 37.78825, // Replace with the desired latitude
     longitude: -122.4324, // Replace with the desired longitude
@@ -61,43 +63,48 @@ const TrackOrderInRealTime = ({navigation, route}) => {
   };
   useEffect(() => {
     // const location = riderLocations?.find(item => item?.riderId == 2);
-    console.log('OrderItem', 'item : ', item);
+    console.log('OrderItem', 'item : ', JSON.stringify(item, null, 2));
     console.log('OrderItem', 'Customer : ', customer);
     console.log('riderLocations', riderLocations);
-    const riderLocationFromApi = {
-      location: {
-        coords: {
-          latitude: item.last_lat != null ? parseFloat(item.last_lat) : null,
-          longitude: item.last_long != null ? parseFloat(item.last_long) : null,
-        },
-      },
-    };
-    let riderLocationFromSocket = riderLocations?.find(
-      i => i?.riderId == item.delivery_boy_id,
-    );
-    const riderCurrentLocation =
-      riderLocationFromSocket != undefined
-        ? riderLocationFromSocket
-        : riderLocationFromApi;
+    fetchData();
+  }, []);
 
-    console.warn('MapScren.js', 'riderCurrentLocation :', riderLocationFromApi);
-    if (riderCurrentLocation?.location?.coords?.latitude != null) {
-      updateMapLocation({
-        latitude: riderCurrentLocation.location.coords.latitude,
-        longitude: riderCurrentLocation.location.coords.longitude,
-      });
-      setLiveLocation({
-        latitude: riderCurrentLocation.location.coords.latitude,
-        longitude: riderCurrentLocation.location.coords.longitude,
-      });
-      getDirections(
-        `${riderCurrentLocation.location.coords.latitude},${riderCurrentLocation.location.coords.longitude}`,
-        item.status == 'Picked'
-          ? `${item?.cutomer.latitude},${item?.customer?.longitude}:${item?.cutomer?.latitude},${item?.cutomer?.longitude}`
-          : `${item?.customer?.latitude},${item?.customer?.longitude}:${item?.vendor?.latitude},${item?.vendor?.longitude}`,
+  const fetchData = async () => {
+    try {
+      const {location} = await getNodeRiderLocation();
+      const riderLocationFromApi = {
+        location: {
+          coords: location,
+        },
+      };
+      const riderCurrentLocation = riderLocationFromApi;
+
+      console.warn(
+        'MapScren.js',
+        'riderCurrentLocation :',
+        riderLocationFromApi,
       );
+      if (riderCurrentLocation?.location?.coords?.latitude != null) {
+        updateMapLocation({
+          latitude: riderCurrentLocation.location.coords.latitude,
+          longitude: riderCurrentLocation.location.coords.longitude,
+        });
+        setLiveLocation({
+          latitude: riderCurrentLocation.location.coords.latitude,
+          longitude: riderCurrentLocation.location.coords.longitude,
+        });
+        const routes = await getDirections(
+          `${riderCurrentLocation.location.coords.latitude},${riderCurrentLocation.location.coords.longitude}`,
+          item.status == 'Picked'
+            ? `${item?.cutomer.latitude},${item?.customer?.longitude}`
+            : `${item?.vendor?.latitude},${item?.vendor?.longitude}`,
+        );
+        setRouteCoords(routes);
+      }
+    } catch (e) {
+      console.log('fetchData error :', e);
     }
-  }, [riderLocations]);
+  };
 
   const updateMapLocation = async coordinates => {
     try {
@@ -119,6 +126,18 @@ const TrackOrderInRealTime = ({navigation, route}) => {
     } catch (e) {
       console.log('Error:', e);
       setSearching(false);
+    }
+  };
+
+  const getNodeRiderLocation = async () => {
+    try {
+      const nodeApiLocation = await NodeGetRequest(
+        `rider/get_location?id=${rider.id}`,
+      );
+      return nodeApiLocation;
+      console.log('nodeApi location', nodeApiLocation);
+    } catch (e) {
+      console.log('node api location error', e);
     }
   };
 
@@ -207,6 +226,13 @@ const TrackOrderInRealTime = ({navigation, route}) => {
             </TouchableOpacity>
           </Marker>
           {/* <Marker coordinate={{latitude: parseFloat(customer.l), longitude: -122.4324}} /> */}
+          {routeCoordinates && (
+            <MapPolyline
+              coordinates={routeCoordinates}
+              strokeWidth={7}
+              strokeColor={'#000'}
+            />
+          )}
         </MapView>
         {item?.delivery_boy && (
           <View style={styles.riderView}>

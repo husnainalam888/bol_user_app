@@ -21,7 +21,7 @@ const Orders = ({navigation}) => {
       setIsLoading(true);
       const response = await getRequest(`get_customer_orders/${user.id}`);
       setIsLoading(false);
-      log.info('Orders :', JSON.stringify(response));
+      log.info('Orders :', JSON.stringify(response, null, 2));
       const res = response.data;
       setOrders(res);
       setIsError(false);
